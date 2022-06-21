@@ -1,5 +1,7 @@
 package com.coderscampus.Assignment14.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +13,32 @@ import com.coderscampus.Assignment14.repository.UserRepository;
 public class UserService {
 	@Autowired
 	private UserRepository userRepo;
-
-	public User createUser(String username, Channel channel) {
-		User newUser = new User();
-		newUser.getChannel().add(channel);
-		newUser.setUsername(username);
-		return userRepo.save(newUser);
+	
+	public  void save(User user) {
+		userRepo.save(user);
+		
+	}
+	public  User createUser(String username) {
+		User user = new User();
+		user.setName(username);
+		return userRepo.save(user);
+		
+	}
+	
+	public User findByName(String name) {
+	
+		return userRepo.findByName(name);
 	}
 
-	public User findByUserId(Long userId) {
-		return userRepo.findByUserId(userId);
+	public Optional<User> findById(Long userId) {
+	
+		return userRepo.findById(userId);
+	}
+
+	public String findName(Long userId) {
+		Optional<User> user = userRepo.findById(userId);
+		
+	String name = user.get().getName();
+		return name;
 	}
 }

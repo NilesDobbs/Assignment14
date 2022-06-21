@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<title>Welcome</title>
+<script>
+	var user = sessionStorage.getItem("user")
+
+	if (user === null) {
+		window.location.replace("/welcome");
+	} else {
+		user = JSON.parse(sessionStorage.getItem("user"))
+	} 
+</script>
+</head>
+<body>
+	<div id="messageDisplay" >
+	</div>
+		<textarea name="messageinput" id="messageBox" rows="4" cols="50"></textarea>
+</body>
+<script type="text/javascript" src="/js/channel.js"></script>
+</html>

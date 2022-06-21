@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.coderscampus.Assignment14.domain.Channel;
 import com.coderscampus.Assignment14.domain.Message;
 
 @Repository

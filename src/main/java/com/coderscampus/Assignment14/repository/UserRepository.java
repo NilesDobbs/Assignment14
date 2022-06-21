@@ -7,6 +7,5 @@ import com.coderscampus.Assignment14.domain.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
-	User findByUserId(Long userId);
-	User findByUsername(String user);
+	User findByName(String name);
 }
