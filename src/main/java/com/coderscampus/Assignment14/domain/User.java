@@ -21,57 +21,39 @@ import javax.persistence.Table;
 @Table(name = "users")
 public class User {
 	private Long userId;
-	private String name;
-	private List<Channel> channels = new ArrayList<Channel>();
-	private List<Message> messages = new ArrayList<Message>();
+	private String username;
+	private List<Message> message = new ArrayList<>();
+	private List<Channel> channel = new ArrayList<>();
 	
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getUserId() {
 		return userId;
 	}
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	@ManyToMany( fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-	@JoinTable(name = "user_channel",
-	joinColumns = @JoinColumn(name = "user_id"), 
-	inverseJoinColumns = @JoinColumn(name = "channel_id"))
-	public List<Channel> getChannels() {
-		return channels;
-	}
-	public void setChannels(List<Channel> channels) {
-		this.channels = channels;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	public List<Message> getMessages() {
-		return messages;
+	public List<Message> getMessage() {
+		return message;
 	}
-	@Override
-	public String toString() {
-		return "User [userId=" + userId + ", name=" + name + ", channels=" + channels + ", messages=" + messages + "]";
+	public void setMessage(List<Message> message) {
+		this.message = message;
 	}
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
+	@JoinTable(name = "channel_user",
+			joinColumns = @JoinColumn(name = "user_id"), 
+			inverseJoinColumns = @JoinColumn(name = "channel_id"))
+	public List<Channel> getChannel() {
+		return channel;
 	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(userId);
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		return Objects.equals(userId, other.userId);
+	public void setChannel(List<Channel> channel) {
+		this.channel = channel;
 	}
 }

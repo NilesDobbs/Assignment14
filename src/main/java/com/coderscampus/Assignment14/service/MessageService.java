@@ -17,40 +17,34 @@ import com.coderscampus.Assignment14.repository.MessageRepository;
 public class MessageService {
 	
 	@Autowired
-	private ChannelService channelService;
-	@Autowired
 	private MessageRepository messageRepo;
+	@Autowired
+	private ChannelService channelService;
 	@Autowired
 	private UserService userService;
 
-	public Message createMessage(MessageDTO message) {
-			Message newMessage = new Message();
-		Optional<Channel> channelOpt = channelService.findById(message.getChannelId());
-		String messageContent = message.getMessageContent();
-		Optional<User> user = userService.findById(message.getUserId());
+	public void createMessage(MessageDTO message, Long channelId) {
+		Channel channel = channelService.findById(channelId);
+		Message newMessage = new Message();
+		User user = new User();
+		user = userService.findByUserId(message.getUserId());
 		newMessage.setUser(user);
-		newMessage.setMessageContent(messageContent);
-		newMessage.setChannel(channelOpt);
+		newMessage.setMessage(message.getMessage());
+		newMessage.setChannel(channel);
 		messageRepo.save(newMessage);
-		System.out.println(newMessage);
-		return null;
-				
 		
 	}
-
-
-
-	public List<MessageDTO> findAllByChannelId( Long channelId) {
-		List<Message> messages = messageRepo.findAllByChannelId(channelId);
-		List<MessageDTO> newMessages = new ArrayList<MessageDTO>();
-		for(Message message : messages) {
-			MessageDTO newMessage = new MessageDTO();
-			newMessage.setMessageName(userService.findName(message.getUser().getUserId()));
-			newMessage.setChannelId(message.getChannel().getChannelId());
-			newMessage.setMessageContent(message.getMessageContent());
-			newMessage.setUserId(message.getUser().getUserId());
-			newMessages.add(newMessage);
+	public List<MessageDTO> getMessageByChannelId(Long channelId) {
+		List<Message> messageList = messageRepo.findAllByChannelId(channelId);
+		List<MessageDTO> messagesDto = new ArrayList<>();
+		for (Message message:messageList) {
+			MessageDTO messageDto = new MessageDTO();
+			messageDto.setMessage(message.getMessage());
+			messageDto.setUserId(message.getUser().getUserId());
+			messageDto.setChannelId(message.getMessageId());
+			messageDto.setUsername(message.getUser().getUsername());
+			messagesDto.add(messageDto);
 		}
-		return newMessages;
-	}	
-}
+		return messagesDto;
+	}
+}	

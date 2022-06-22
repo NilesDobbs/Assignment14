@@ -1,44 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org">
+<html xmlns:th = "http://thymeleaf.org">
 <head>
-<title>Welcome</title>
-
-<script type="text/javascript">
-var user = sessionStorage.getItem("user")
-if( user ===  null){
-	let username = prompt("Enter Your Name", "Guest")
-	while( username ===  null || username == ""){
-	username = prompt("Enter Your Name", "Guest")
-
-	} 
-	fetch("/welcome/createUser", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: username
-	}).then(response => response.json()).then(user => sessionStorage.setItem("user", JSON.stringify(user)))
-	
-	} else {
-		user = JSON.parse(sessionStorage.getItem("user"))
-	} 
-</script>
+	<title>Welcome</title>
+	<script type ="text/javascript" src= "/js/welcome.js"></script>
 </head>
 <body>
-<h2>Join A Channel</h2>
-
-<div th:each="channel : ${channels}">
-		<a th:href="@{/channels/{channelId}(channelId=${channel.channelId})}"
-		   th:text="${channel.channelName}"></a>
-</div>
-<hr>
-<form action="/welcome/createChannel" method="post" >
-				<div>
-				Create new Channel: <input type="text" th:field="${channel.channelName}" />
-			</div>
+<h1>Join A Channel</h1>	
+	<div>
+			<tr th:each = "channel:${channels}">
 			<div>
-				<input type="submit" value="Create Channel" />
+				<a th:href = "@{/channels/{channelId}(channelId=${channel.channelId})}">[[${channel.name}]]</a>
 			</div>
-</form>
+			</tr>
+	</div>
+	<div>
+	<a th:href = "createChannel">Create New Channel</a>
+	</div>
+	<script type="text/javascript" src = "/js/welcome.js"></script>
 </body>
 </html>

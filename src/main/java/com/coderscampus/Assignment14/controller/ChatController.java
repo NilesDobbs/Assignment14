@@ -26,54 +26,64 @@ public class ChatController {
 	private UserService userService;
 	@Autowired
 	private MessageService messageService;
-
+	
 	@GetMapping("/")
 	public String directToWelcome() {
 		return "redirect:/welcome";
 	}
-
+	
 	@GetMapping("/welcome")
-	public String getWelcomePage(ModelMap model) {
-
-		List<Channel> channels = channelService.findAll();
-		model.put("channels", channels);
-		model.put("channel", new Channel());
-
+	public String welcomePage(ModelMap model) {
+		Channel channel = new Channel();
+		List<Channel> allChannels = channelService.findAll();
+		if(allChannels.size() == 0) {
+			channel = channelService.createChannel(channel);
+		}else {
+			channel = allChannels.get(0);
+		}
+		model.put("channel", channel);
+		model.put("channels", allChannels);
 		return "welcome";
 	}
-
-	@GetMapping("/channels/{channelId}")
-	public String getOneChannel(@PathVariable Long channelId) {
-		return "channel";
-	}
-
-	@PostMapping("/channels/{channelId}/getMessages")
 	@ResponseBody
-	public List<MessageDTO> getMessages(@PathVariable Long channelId) {
-		return messageService.findAllByChannelId(channelId);
+	@PostMapping("/welcome/createuser")
+	public User createUser(@RequestBody String username, Channel channel) {
+		return userService.createUser(username, channel);
 	}
-
-	@PostMapping("/channels/{channelId}/createMessage")
-	@ResponseBody
-	public void createMessage(@RequestBody MessageDTO message) {
-		
-		System.out.println("making new message");
-		messageService.createMessage(message);
-
+	@GetMapping("/createChannel")
+	public String createChannel(ModelMap model) {
+		Channel channel = new Channel();
+		model.put("channel", channel);
+		return "createChannel";
 	}
-
-	@PostMapping("/welcome/createChannel")
-	public String createNewChannel(Channel channel) {
-		
-		channelService.save(channel);
+	
+	@PostMapping("/createChannel")
+	public String createChannel(Channel channelSubmission) {
+		channelService.createCustomChannel(channelSubmission);
 		return "redirect:/welcome";
 	}
-
-	@PostMapping("/welcome/createUser")
+	@GetMapping("/channels/{channelId}")
+		public String showChannels(ModelMap model, @PathVariable Long channelId) {
+		Channel channel = channelService.findById(channelId);
+		model.put("channel", channel);
+		return "channels";
+	}
 	@ResponseBody
-	public User createUser(@RequestBody String username) {
+	@PostMapping("/messageSent/{channelId}")
+		private void messageReceived (@RequestBody MessageDTO message, @PathVariable Long channelId) {
+		MessageDTO messageDto = new MessageDTO();
+		System.out.println(message.getChannelId());
+		messageDto.setChannelId(message.getChannelId());
+		messageDto.setMessage(message.getMessage());
+		messageDto.setUserId(message.getUserId());
+		messageService.createMessage(message,channelId);
 		
-		return userService.createUser(username);
-
+	}
+	@ResponseBody
+	@PostMapping("/obtainMessages/{channelId}")
+		private List<MessageDTO> obtainMessages(@PathVariable Long channelId) {
+			
+			return messageService.getMessageByChannelId(channelId);
+		
 	}
 }
