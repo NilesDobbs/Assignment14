@@ -34,16 +34,17 @@ public class ChatController {
 	
 	@GetMapping("/welcome")
 	public String welcomePage(ModelMap model) {
-		Channel channel = new Channel();
-		List<Channel> allChannels = channelService.findAll();
-		if(allChannels.size() == 0) {
-			channel = channelService.createChannel(channel);
-		}else {
-			channel = allChannels.get(0);
-		}
-		model.put("channel", channel);
+		List<Channel> allChannels = getChannels();
 		model.put("channels", allChannels);
 		return "welcome";
+	}
+	private List<Channel> getChannels() {
+		List<Channel> allChannels = channelService.findAll();
+		if(allChannels.size() == 0) {
+			channelService.createChannel(new Channel());
+			allChannels = channelService.findAll();
+		}
+		return allChannels;
 	}
 	@ResponseBody
 	@PostMapping("/welcome/createuser")

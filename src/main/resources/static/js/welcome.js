@@ -1,4 +1,4 @@
-	let username = prompt('Enter your name') 
+let username = prompt('Enter your name') 
 		fetch("/welcome/createuser", {
 		method : "POST",
 		headers: {
